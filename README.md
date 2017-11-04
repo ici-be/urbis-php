@@ -13,11 +13,11 @@ Use it via composer + packagist: https://packagist.org/packages/ici-brussels/bpo
 ## Usage
 
 ```php
-$bpost = new Bpost_Address_Validation();
+$urbis = new Urbis_Geoloc();
 
 // Find relevant address according to input
 /* Option 1: Structured */
-$urbis->getAddress_Structured("rue américaine", "25", "1060", "fr", "4326");
+$urbis->getAddress_Structured("rue américaine", "25", "1060", "fr");
 */
 
 // get array with latitude/longitude
