@@ -18,6 +18,20 @@ $urbis = new Urbis_Geoloc();
 // Find relevant address according to input
 /* Option 1: Structured */
 $urbis->getAddress_Structured("rue américaine", "25", "1060", "fr");
+/* Option 2: Unstructured */
+$urbis->getAddress_Unstructured("rue américaine 25");
+
+// get array with validated address
+$result = $urbis->getStructuredAddress();
+print_r($result);
+/*
+Array
+(
+    [StreetName] => Rue Américaine
+    [StreetNumber] => 25
+    [PostalCode] => 1060
+    [MunicipalityName] => Saint-Gilles
+)
 */
 
 // get array with latitude/longitude
