@@ -8,7 +8,7 @@ urbis-php gives developpers a tool to use it easily with PHP.
 
 The tool only requires **PHP 7.0+** and **guzzlehttp/guzzle**.
 
-Use it via composer + packagist: https://packagist.org/packages/ici-brussels/bpost-addresses
+Use it via composer + packagist: https://packagist.org/packages/ici-brussels/urbis-php
 
 ## Usage
 
