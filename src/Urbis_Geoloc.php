@@ -7,58 +7,73 @@ class Urbis_Geoloc
       else {
         $request = "http://geoservices.irisnet.be/localization/Rest/Localize/getaddresses?language=".$lang."&address=".urlencode($StreetName)."&spatialReference=".$crs;
       };
-
       return $request;
   }
-
-  private function doRequest($request)
+  private function doRequest($request, string $lang = null, int $crs = null)
   {
       $client   = new GuzzleHttp\Client();
       $response = $client->request('GET', $request);
       
-      $data = json_decode((string)$response->getBody());
-      return $data;
-  }
+      $json = json_decode((string)$response->getBody());
 
+        $this->_address = new stdClass();
+        $this->_address->StreetName = new stdClass();
+        $this->_address->StreetName->{$lang??$this->_call->lang}         = $json->result[0]->address->street->name;
+        $this->_address->StreetNumber               = $json->result[0]->address->number;
+        $this->_address->PostalCode                 = $json->result[0]->address->street->postCode;
+        $this->_address->MunicipalityName->{$lang??$this->_call->lang}           = $json->result[0]->address->street->municipality;
+        $this->_address->$crs = new stdClass();
+        $this->_address->$crs->lat                  = $json->result[0]->point->y;
+        $this->_address->$crs->lon                  = $json->result[0]->point->x;
+  }
   public function getAddress_Structured(string $StreetName, ?string $StreetNumber = null, ?int $PostalCode = null, string $lang = "fr", int $crs = 31370)
   {
-      $request        = $this->createJson(true, $StreetName, $StreetNumber, $PostalCode, $lang, $crs);
-      $this->_address = $this->doRequest($request);
+        $this->_call->lang    = $lang;
+        $this->_call->crs     = $crs;
+        $request              = $this->createJson(true, $StreetName, $StreetNumber, $PostalCode, $lang, $crs);
+        $this->doRequest($request, $lang, $crs);
   }
-
   public function getAddress_Unstructured(string $Address, string $lang = "fr", int $crs = 31370)
   {
-      $request        = $this->createJson(false, $Address, null, null, $lang, $crs);
-      $this->_address = $this->doRequest($request);
+        $this->_call->lang    = $lang;
+        $this->_call->crs     = $crs;     
+        $request              = $this->createJson(false, $Address, null, null, $lang, $crs);
+        $this->doRequest($request, $lang, $crs);
   }
-
   public function getAllAddress()
   {
       return $this->_address??null;
   }
-  
-  public function getWKTpoint()
+
+  public function getPostalCode()
   {
-      return "POINT(".$this->_address->result[0]->point->x." ".$this->_address->result[0]->point->y.")";
+      return $this->_address->PostalCode??null;
+  } 
+
+  public function getWKTpoint(int $crs = null)
+  {
+      return $this->_address->{$crs??$this->_call->crs}->wkt??null;
   }
 
-   public function getStructuredAddress()
+ 
+  public function getWKT_from_point(int $crs = null)
   {
-          $data['StreetName'] = $this->_address->result[0]->address->street->name;
-          $data['StreetNumber'] = $this->_address->result[0]->address->number;
-          $data['PostalCode'] = $this->_address->result[0]->address->street->postCode;
-          $data['MunicipalityName'] = $this->_address->result[0]->address->street->municipality;     
+      $this->_address->$crs->wkt = "POINT(".$this->_address->{$crs??$this->_call->crs}->lon." ".$this->_address->{$crs??$this->_call->crs}->lat.")";
+  }
 
+ 
+
+   public function getStructuredAddress(string $lang = null)
+  {
+          $data['StreetName'][$lang??$this->_call->lang]        = $this->_address->StreetName->{$lang??$this->_call->lang};
+          $data['StreetNumber']             = $this->_address->StreetNumber;
+          $data['PostalCode']               = $this->_address->PostalCode;
+          $data['MunicipalityName'][$lang??$this->_call->lang]  = $this->_address->MunicipalityName->{$lang??$this->_call->lang};     
           return $data;
   }
-
-   public function getGeographicalLocation()
+   public function getGeographicalLocation(int $crs = null)
   {
-
-         $data['lat'] = $this->_address->result[0]->point->y;
-         $data['lon'] = $this->_address->result[0]->point->x;
-         return $data;
+         return ["lat" => $this->_address->{$crs??$this->_call->crs}->lat, "lon" => $this->_address->{$crs??$this->_call->crs}->lon];
   }
-
 }
 ?>
