@@ -26,9 +26,9 @@ class Urbis_Geoloc
       $this->_address = $this->doRequest($request);
   }
 
-  public function getAddress_Unstructured(string $Address)
+  public function getAddress_Unstructured(string $Address, string $lang = "fr", int $crs = 31370)
   {
-      $request        = $this->createJson(false, $Address);
+      $request        = $this->createJson(false, $Address, null, null, $lang, $crs);
       $this->_address = $this->doRequest($request);
   }
 
