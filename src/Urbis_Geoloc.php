@@ -36,6 +36,11 @@ class Urbis_Geoloc
   {
       return $this->_address??null;
   }
+  
+  public function getWKTpoint()
+  {
+      return "POINT(".$this->_address->result[0]->point->x." ".$this->_address->result[0]->point->y.")";
+  }
 
    public function getStructuredAddress()
   {
