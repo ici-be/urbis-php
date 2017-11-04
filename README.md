@@ -19,7 +19,7 @@ $urbis = new Urbis_Geoloc();
 /* Option 1: Structured */
 $urbis->getAddress_Structured("rue américaine", "25", "1060", "fr");
 /* Option 2: Unstructured */
-$urbis->getAddress_Unstructured("rue américaine 25");
+$urbis->getAddress_Unstructured("rue américaine 25", "fr");
 
 // get array with validated address
 $result = $urbis->getStructuredAddress();
