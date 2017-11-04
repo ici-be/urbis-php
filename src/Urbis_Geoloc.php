@@ -25,6 +25,7 @@ class Urbis_Geoloc
         $this->_address->$crs = new stdClass();
         $this->_address->$crs->lat                  = $json->result[0]->point->y;
         $this->_address->$crs->lon                  = $json->result[0]->point->x;
+        $this->_address->$crs->wkt = "POINT(".$json->result[0]->point->x." ".$json->result[0]->point->y.")";
   }
   public function getAddress_Structured(string $StreetName, ?string $StreetNumber = null, ?int $PostalCode = null, string $lang = "fr", int $crs = 31370)
   {
@@ -54,14 +55,6 @@ class Urbis_Geoloc
   {
       return $this->_address->{$crs??$this->_call->crs}->wkt??null;
   }
-
- 
-  public function getWKT_from_point(int $crs = null)
-  {
-      $this->_address->$crs->wkt = "POINT(".$this->_address->{$crs??$this->_call->crs}->lon." ".$this->_address->{$crs??$this->_call->crs}->lat.")";
-  }
-
- 
 
    public function getStructuredAddress(string $lang = null)
   {
