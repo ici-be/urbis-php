@@ -1,3 +1,4 @@
+<?php
 class Urbis_Geoloc
 { 
   private function createJson(bool $structured = true, string $StreetName, ?string $StreetNumber = null, ?int $PostalCode = null, string $lang = "fr", int $crs = 31370)
@@ -36,3 +37,4 @@ class Urbis_Geoloc
   }
 
 }  
+?>
