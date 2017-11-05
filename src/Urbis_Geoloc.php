@@ -21,6 +21,7 @@ class Urbis_Geoloc
         $this->_address->StreetName->{$lang??$this->_call->lang}         = $json->result[0]->address->street->name;
         $this->_address->StreetNumber               = $json->result[0]->address->number;
         $this->_address->PostalCode                 = $json->result[0]->address->street->postCode;
+        $this->_address->MunicipalityName = new stdClass();
         $this->_address->MunicipalityName->{$lang??$this->_call->lang}           = $json->result[0]->address->street->municipality;
         $this->_address->coord = new stdClass();
         $this->_address->coord->$crs = new stdClass();
@@ -30,6 +31,7 @@ class Urbis_Geoloc
   }
   public function getAddress_Structured(string $StreetName, ?string $StreetNumber = null, ?int $PostalCode = null, string $lang = "fr", int $crs = 31370)
   {
+        $this->_call = new stdClass();
         $this->_call->lang    = $lang;
         $this->_call->crs     = $crs;
         $request              = $this->createJson(true, $StreetName, $StreetNumber, $PostalCode, $lang, $crs);
@@ -37,6 +39,7 @@ class Urbis_Geoloc
   }
   public function getAddress_Unstructured(string $Address, string $lang = "fr", int $crs = 31370)
   {
+        $this->_call = new stdClass();
         $this->_call->lang    = $lang;
         $this->_call->crs     = $crs;     
         $request              = $this->createJson(false, $Address, null, null, $lang, $crs);
