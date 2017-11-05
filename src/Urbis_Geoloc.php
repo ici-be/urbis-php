@@ -22,10 +22,11 @@ class Urbis_Geoloc
         $this->_address->StreetNumber               = $json->result[0]->address->number;
         $this->_address->PostalCode                 = $json->result[0]->address->street->postCode;
         $this->_address->MunicipalityName->{$lang??$this->_call->lang}           = $json->result[0]->address->street->municipality;
-        $this->_address->$crs = new stdClass();
-        $this->_address->$crs->lat                  = $json->result[0]->point->y;
-        $this->_address->$crs->lon                  = $json->result[0]->point->x;
-        $this->_address->$crs->wkt = "POINT(".$json->result[0]->point->x." ".$json->result[0]->point->y.")";
+        $this->_address->coord = new stdClass();
+        $this->_address->coord->$crs = new stdClass();
+        $this->_address->coord->$crs->lat                  = $json->result[0]->point->y;
+        $this->_address->coord->$crs->lon                  = $json->result[0]->point->x;
+        $this->_address->coord->$crs->wkt = "POINT(".$json->result[0]->point->x." ".$json->result[0]->point->y.")";
   }
   public function getAddress_Structured(string $StreetName, ?string $StreetNumber = null, ?int $PostalCode = null, string $lang = "fr", int $crs = 31370)
   {
@@ -41,6 +42,18 @@ class Urbis_Geoloc
         $request              = $this->createJson(false, $Address, null, null, $lang, $crs);
         $this->doRequest($request, $lang, $crs);
   }
+
+  public function getUrl_from_address(string $StreetFR = null, ?string $StreetNumber = null, ?int $PostalCode = null)
+    {
+        $StreetNumber = trim(strtok(strtok(strtok($StreetNumber??$this->_address->StreetNumber, "-"),";"),","));
+        $PostalCode = $PostalCode??$this->_address->PostalCode;
+        $StreetFR = $StreetFR??$this->_address->StreetName->fr;
+        if($PostalCode!="" && $StreetNumber!="") 
+        {
+            $this->_address->url = $PostalCode.'::'.urlencode(utf8_decode($StreetFR)).'::'.str_replace("/", "%3A", $StreetNumber);
+        };
+    }
+
   public function getAllAddress()
   {
       return $this->_address??null;
@@ -53,7 +66,7 @@ class Urbis_Geoloc
 
   public function getWKTpoint(int $crs = null)
   {
-      return $this->_address->{$crs??$this->_call->crs}->wkt??null;
+      return $this->_address->coord->{$crs??$this->_call->crs}->wkt??null;
   }
 
    public function getStructuredAddress(string $lang = null)
@@ -66,7 +79,7 @@ class Urbis_Geoloc
   }
    public function getGeographicalLocation(int $crs = null)
   {
-         return ["lat" => $this->_address->{$crs??$this->_call->crs}->lat, "lon" => $this->_address->{$crs??$this->_call->crs}->lon];
+         return ["lat" => $this->_address->coord->{$crs??$this->_call->crs}->lat, "lon" => $this->_address->coord->{$crs??$this->_call->crs}->lon];
   }
 }
 ?>
